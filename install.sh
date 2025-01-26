@@ -274,14 +274,14 @@ install_codelive() {
     fi
 }
 
-# Check for command line arguments
-if [ "$1" = "--install" ]; then
+# Check if script is being run via curl
+if [ -z "$PS1" ] || [ "$1" = "--install" ]; then
     check_server_running
     install_codelive
     exit 0
 fi
 
-# Show ASCII art
+# Show ASCII art and menu only in interactive mode
 echo "
  ██████  ██████  ██████  ███████ ██      ██ ██    ██ ███████ 
 ██      ██    ██ ██    ██ ██      ██      ██ ██    ██ ██      
