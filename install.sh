@@ -274,73 +274,40 @@ install_codelive() {
     fi
 }
 
-# Function to show menu
-show_menu() {
-    echo -e "\n${BLUE}Welcome to CodeLive!${NC}"
-    echo -e "${YELLOW}Please select an option:${NC}"
-    echo -e "1) Start CodeLive Server"
-    echo -e "2) Install CodeLive"
-    echo -e "3) Get API Key"
-    echo -e "4) Exit"
-    
-    read -p "Enter your choice (1-4): " choice
-    
-    case $choice in
-        1)
-            show_progress "Starting CodeLive Server"
-            start_codelive_server
-            ;;
-        2)
-            show_progress "Starting installation process"
-            install_codelive
-            ;;
-        3)
-            show_progress "Opening browser to get API key"
-            case "$(uname -s)" in
-                Darwin)
-                    open "https://codelive.ai/pricing"
-                    ;;
-                Linux)
-                    xdg-open "https://codelive.ai/pricing"
-                    ;;
-                *)
-                    echo -e "${YELLOW}Please visit https://codelive.ai/pricing in your browser${NC}"
-                    ;;
-            esac
-            exit 0
-            ;;
-        4)
-            echo -e "${BLUE}Goodbye!${NC}"
-            exit 0
-            ;;
-        *)
-            echo -e "${RED}Invalid option. Please try again.${NC}"
-            exit 1
-            ;;
-    esac
-}
-
-# Main execution starts here
-# Ensure script is not run as root
-if [ "$EUID" -eq 0 ]; then
-    show_error "This installer should not be run as root. Please run it as a regular user."
+# Check for command line arguments
+if [ "$1" = "--install" ]; then
+    check_server_running
+    install_codelive
+    exit 0
 fi
 
-# Check if server is already running
-check_server_running
-
 # Show ASCII art
-echo -e "${RED}"
-cat << "EOF"
+echo "
  ██████  ██████  ██████  ███████ ██      ██ ██    ██ ███████ 
 ██      ██    ██ ██    ██ ██      ██      ██ ██    ██ ██      
 ██      ██    ██ ██    ██ █████   ██      ██ ██    ██ █████   
 ██      ██    ██ ██    ██ ██      ██      ██  ██  ██  ██      
  ██████  ██████  ██████  ███████ ███████ ██   ████   ███████  
                   [ CLI INSTALLER ]
-EOF
-echo -e "${NC}"
-echo -e "${BLUE}A Duran Company${NC}\n"
 
-# Show the menu
-show_menu
+A Duran Company
+"
+
+# Interactive menu
+while true; do
+    echo -e "\nWelcome to CodeLive!"
+    echo "Please select an option:"
+    echo "1) Start CodeLive Server"
+    echo "2) Install CodeLive"
+    echo "3) Get API Key"
+    echo "4) Exit"
+    read -r choice
+
+    case $choice in
+        1) start_codelive_server ;;
+        2) install_codelive ;;
+        3) echo "API Key functionality coming soon..." ;;
+        4) exit 0 ;;
+        *) echo "Invalid option. Please try again." ;;
+    esac
+done
